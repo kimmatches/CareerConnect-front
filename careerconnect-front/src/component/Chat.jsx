@@ -66,7 +66,7 @@ const Chat = () => {
 
                 <div className="profile-button-container">
                     <button className="profile-button">
-                        프로필봐
+                        프로필
                     </button>
                 </div>
             </div>
