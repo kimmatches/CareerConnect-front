@@ -14,7 +14,7 @@
   
   .content-area {
     flex-grow: 1;
-    padding: 20px;
+    padding: 50px;
     padding-top: 60px;
     transition: margin-left 0.3s ease;
   }

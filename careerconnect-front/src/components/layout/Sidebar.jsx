@@ -12,7 +12,7 @@ const SidebarItem = ({ icon, text, to }) => (
 
 const Sidebar = ({ isVisible, toggleSidebar }) => {
     const [chatRooms, setChatRooms] = useState([
-        { id: 1, name: "나의 채팅", to: "/my-chats" },
+        { id: 1, name: "나의 채팅", to: "/mychat" },
         { id: 2, name: "친구", to: "/chat" },
         { id: 3, name: "스터디방", to: "/groupchat" },
     ]);
