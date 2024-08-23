@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './Chat.css';
 
 const SidebarItem = ({ icon, text, onClick, isActive }) => (
@@ -22,9 +22,13 @@ const ChatListItem = ({ name, message, isOnline, onClick }) => (
         </div>
     </div>
 );
-
 const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
     const [newMessage, setNewMessage] = useState('');
+    const [position, setPosition] = useState({ x: 20, y: 20 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const chatWindowRef = useRef(null);
 
     const handleSend = () => {
         if (newMessage.trim() !== '') {
@@ -33,11 +37,83 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
         }
     };
 
+    const handleMouseDown = (e) => {
+        if (!isFullScreen && e.target.closest('.chat-header') && !e.target.closest('.fullscreen-toggle')) {
+            setIsDragging(true);
+            const rect = chatWindowRef.current.getBoundingClientRect();
+            setDragOffset({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            });
+        }
+    };
+
+    const handleMouseMove = useCallback((e) => {
+        if (isDragging && !isFullScreen) {
+            const newX = e.clientX - dragOffset.x;
+            const newY = e.clientY - dragOffset.y;
+            setPosition({ x: newX, y: newY });
+        }
+    }, [isDragging, dragOffset, isFullScreen]);
+
+    const handleMouseUp = useCallback(() => {
+        setIsDragging(false);
+    }, []);
+
+    const toggleFullScreen = () => {
+        setIsFullScreen(!isFullScreen);
+        if (isFullScreen) {
+            const maxX = window.innerWidth - 300;
+            const maxY = window.innerHeight - 400;
+            setPosition({
+                x: Math.min(Math.max(position.x, 0), maxX),
+                y: Math.min(Math.max(position.y, 0), maxY)
+            });
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [handleMouseMove, handleMouseUp]);
+
+    const chatWindowStyle = isFullScreen
+        ? {
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1000
+        }
+        : {
+            position: 'fixed',
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+            width: '300px',
+            height: '400px',
+            cursor: isDragging ? 'grabbing' : 'auto'
+        };
+
     return (
-        <div className="chat-window">
-            <div className="chat-header">
+        <div
+            className={`chat-window ${isFullScreen ? 'fullscreen' : ''}`}
+            style={chatWindowStyle}
+            ref={chatWindowRef}
+            onMouseDown={handleMouseDown}
+        >
+            <div className="chat-header" style={{ cursor: isFullScreen ? 'default' : 'grab' }}>
                 <h3>{chat.name}</h3>
-                <button onClick={onClose}>×</button>
+                <div>
+                    <button className="fullscreen-toggle" onClick={toggleFullScreen}>
+                        {isFullScreen ? '🗗' : '🗖'}
+                    </button>
+                    <button onClick={onClose}>×</button>
+                </div>
             </div>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
@@ -97,9 +173,7 @@ const Chat = () => {
         { id: 2, name: "AI", message: "오늘도 열심히", isOnline: false },
         { id: 3, name: "친구", message: "안녕하세요", isOnline: true },
     ]);
-    const [chatRooms, setChatRooms] = useState([
-        { id: 1, name: "일반 채팅방", lastMessage: "환영합니다!" },
-    ]);
+
     const [selectedChat, setSelectedChat] = useState(null);
     const [chatMessages, setChatMessages] = useState({});
     const [activeSection, setActiveSection] = useState('friends');
@@ -131,9 +205,7 @@ const Chat = () => {
         friend.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredChatRooms = chatRooms.filter(room =>
-        room.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+
 
     const openChat = (chat) => {
         setSelectedChat(chat);
@@ -169,24 +241,12 @@ const Chat = () => {
         }
     };
 
-    const createChatRoom = (roomName) => {
-        const newRoom = {
-            id: chatRooms.length + 1,
-            name: roomName,
-            lastMessage: "새로운 채팅방이 생성되었습니다.",
-        };
-        setChatRooms([...chatRooms, newRoom]);
-    };
 
     return (
         <div className="chat-container">
             <div className="sidebar">
                 <div className="sidebar-header">
-                    <h2>메뉴</h2>
                 </div>
-                <SidebarItem icon="👥" text="친구" onClick={() => setActiveSection('friends')} isActive={activeSection === 'friends'} />
-                <SidebarItem icon="💬" text="채팅" onClick={() => setActiveSection('chats')} isActive={activeSection === 'chats'} />
-                <SidebarItem icon="📚" text="커스텀 스터디" onClick={() => setActiveSection('customStudy')} isActive={activeSection === 'customStudy'} />
                 <SidebarItem icon="🔖" text="관심 스터디" onClick={() => setActiveSection('interestedStudy')} isActive={activeSection === 'interestedStudy'} />
             </div>
 
@@ -235,30 +295,14 @@ const Chat = () => {
                         </div>
                     )}
 
-                    {activeSection === 'chats' && (
-                        <div className="chat-list">
-                            {filteredChatRooms.map(room => (
-                                <ChatListItem
-                                    key={room.id}
-                                    name={room.name}
-                                    message={room.lastMessage}
-                                    onClick={() => openChat(room)}
-                                />
-                            ))}
-                        </div>
-                    )}
 
                     {activeSection === 'customStudy' && (
                         <div className="custom-study">
-                            <h2>커스텀 스터디</h2>
-                            <p>여기에 커스텀 스터디 기능을 구현할 수 있습니다.</p>
                         </div>
                     )}
 
                     {activeSection === 'interestedStudy' && (
                         <div className="interested-study">
-                            <h2>관심 스터디</h2>
-                            <p>여기에 관심 스터디 기능을 구현할 수 있습니다.</p>
                         </div>
                     )}
                 </div>
@@ -276,7 +320,6 @@ const Chat = () => {
             {showCreateRoomModal && (
                 <CreateChatRoomModal
                     onClose={() => setShowCreateRoomModal(false)}
-                    onCreateRoom={createChatRoom}
                 />
             )}
         </div>

@@ -2,31 +2,31 @@ import React, { useState } from 'react';
 import './Chat.css';
 
 const GroupChatListItem = ({ groupName, messages, members }) => (
-  <div className="chat-item">
-    <div className="chat-avatar-group">
-      {members.slice(0, 3).map((member, index) => (
-        <div
-          key={index}
-          className="chat-avatar"
-          style={{ backgroundColor: member.color }}
-        >
-          {member.name[0]}
-        </div>
-      ))}
-    </div>
-    <div className="chat-content">
-      <div className="chat-name">
-        {groupName}
+    <div className="chat-item">
+      <div className="chat-avatar-group">
+        {members.slice(0, 3).map((member, index) => (
+            <div
+                key={index}
+                className="chat-avatar"
+                style={{ backgroundColor: member.color }}
+            >
+              {member.name[0]}
+            </div>
+        ))}
       </div>
-      <p className="chat-message">{messages}</p> 
+      <div className="chat-content">
+        <div className="chat-name">
+          {groupName}
+        </div>
+        <p className="chat-message">{messages[messages.length - 1]}</p>
+      </div>
     </div>
-  </div>
 );
 
 const GroupChat = () => {
   const [searchQuery, setSearchQuery] = useState('');
-
-  const groupChats = [
+  const [newRoomName, setNewRoomName] = useState('');
+  const [groupChats, setGroupChats] = useState([
     {
       groupName: "개발자 모임",
       messages: ["프로젝트 업데이트가 필요해요."],
@@ -54,45 +54,66 @@ const GroupChat = () => {
         { name: "회원3", color: "#3498db" }
       ]
     }
-  ];
+  ]);
+
+  const createNewRoom = (e) => {
+    e.preventDefault();
+    if (newRoomName.trim() !== '') {
+      const newRoom = {
+        groupName: newRoomName,
+        messages: ["새로운 방이 생성되었습니다."],
+        members: [
+          { name: "나", color: "#3498db" },
+          { name: "AI", color: "#e74c3c" }
+        ]
+      };
+      setGroupChats([...groupChats, newRoom]);
+      setNewRoomName('');
+    }
+  };
 
   return (
-    <div className="main-chat-area">
-      <div className="search-bar">
-        <div className="search-input">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="검색"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="search-input">
-          <span className="search-icon">🔍</span>
-          <input type="text" placeholder="방 만들기" />
-        </div>
-        <div className="search-input">
-          <span className="search-icon">🔍</span>
-          <input type="text" placeholder="나의 방 관리" />
-        </div>
-      </div>
-
-      <div className="chat-list">
-        {groupChats
-          .filter((group) =>
-            group.groupName.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((group, index) => (
-            <GroupChatListItem
-              key={index}
-              groupName={group.groupName}
-              messages={group.messages}
-              members={group.members}
+      <div className="main-chat-area">
+        <div className="search-bar">
+          <div className="search-input">
+            <span className="search-icon">🔍</span>
+            <input
+                type="text"
+                placeholder="검색"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
             />
-          ))}
+          </div>
+          <form onSubmit={createNewRoom} className="search-input">
+            <span className="search-icon">➕</span>
+            <input
+                type="text"
+                placeholder="방 만들기"
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+            />
+          </form>
+          <div className="search-input">
+            <span className="search-icon">🔧</span>
+            <input type="text" placeholder="나의 방 관리" />
+          </div>
+        </div>
+
+        <div className="chat-list">
+          {groupChats
+              .filter((group) =>
+                  group.groupName.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((group, index) => (
+                  <GroupChatListItem
+                      key={index}
+                      groupName={group.groupName}
+                      messages={group.messages}
+                      members={group.members}
+                  />
+              ))}
+        </div>
       </div>
-    </div>
   );
 };
 

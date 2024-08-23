@@ -2,12 +2,9 @@
     position: relative;
 }
 
-.sidebar-header {
-    background-color: #f0f0f0;
-    padding: 15px;
-}
-
 .sidebar {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     width: 250px;
     background-color: #f0f0f0;
@@ -22,6 +19,22 @@
 
 .sidebar.visible {
     transform: translateX(0);
+}
+
+.sidebar-header {
+    background-color: #f0f0f0;
+    padding: 15px;
+    margin-bottom: 30px;
+}
+
+.sidebar-header h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.sidebar-content {
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 .sidebar-item {
@@ -40,15 +53,6 @@
 .sidebar-icon {
     margin-right: 10px;
     font-size: 20px;
-}
-
-.sidebar-header {
-margin-bottom: 30px;
-}
-
-.sidebar-header h2 {
-font-size: 24px;
-margin: 0;
 }
 
 .create-room-container {
@@ -82,4 +86,32 @@ margin: 0;
 .create-room-cancel-btn:hover,
 .create-room-toggle-btn:hover {
     background-color: #2980b9;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+.logout-btn .sidebar-icon {
+    margin-right: 10px;
 }
