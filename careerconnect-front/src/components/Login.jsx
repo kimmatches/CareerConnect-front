@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
     const [id, setid] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAuth();
+    // const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(id, password);
+            // await login(id, password);
         } catch (error) {
             console.error('Login failed:', error);
         }
