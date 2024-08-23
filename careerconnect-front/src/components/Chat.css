@@ -257,7 +257,7 @@ body {
 .chat-input input {
     flex: 1;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #eee;
     border-radius: var(--border-radius);
     outline: none;
     font-size: 14px;
@@ -302,7 +302,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #eee;
     border-radius: 4px;
 }
 
