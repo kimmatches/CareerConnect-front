@@ -15,7 +15,7 @@ const Sidebar = ({ isVisible, toggleSidebar }) => (
     <div className="sidebar-header">
       <IoMenu size={30} color="black" onClick={toggleSidebar} />
     </div>
-    <SidebarItem icon="💬" text="나의 채팅" to="/my-chats" />
+    <SidebarItem icon="💬" text="나의 채팅" to="/mychat" />
     <SidebarItem icon="💬" text="친구" to="/chat" />
     <SidebarItem icon="💬" text="스터디방" to="/groupchat" />
   </div>
