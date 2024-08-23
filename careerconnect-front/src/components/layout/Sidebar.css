@@ -39,3 +39,36 @@
 .sidebar-icon {
     margin-right: 10px;
 }
+
+.create-room-container {
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.create-room-toggle-btn,
+.create-room-btn,
+.create-room-cancel-btn {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.create-room-input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.create-room-btn:hover,
+.create-room-cancel-btn:hover,
+.create-room-toggle-btn:hover {
+    background-color: #2980b9;
+}

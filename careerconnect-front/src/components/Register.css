@@ -1,128 +1,163 @@
-/* components/Register.css */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
-
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Noto Sans KR', sans-serif;
-    background: linear-gradient(45deg, #64b3f4 0%, #c2e59c 100%);
-    height: 100vh;
+.register-page {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
 }
 
-.register-container {
+.register-form-section {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.register-form-container {
     width: 100%;
-}
-
-.register-box {
-    width: 450px;
-    padding: 2.5rem;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px 0 rgba(100, 179, 244, 0.4);
-    text-align: center;
-    animation: fadeInUp 1s ease-out;
+    max-width: 400px;
 }
 
 .register-title {
-    font-size: 2.2rem;
-    margin-bottom: 1.5rem;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    animation: fadeInDown 1s ease-out;
-}
-
-.register-input {
-    width: 100%;
-    padding: 0.9rem;
-    margin-bottom: 1.2rem;
-    border: none;
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 1rem;
+    color: #ff6b6b;
+    margin-bottom: 30px;
+    font-size: 32px;
     text-align: center;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.register-input:focus {
-    background: rgba(255, 255, 255, 0.5);
-    outline: none;
-    box-shadow: 0 0 15px rgba(100, 179, 244, 0.5);
+.register-form {
+    display: flex;
+    flex-direction: column;
 }
 
-.error-message {
-    color: #ff4d4d;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 25px;
+    padding: 5px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.input-icon {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.input-group input {
+    flex-grow: 1;
+    padding: 12px;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    color: #4a4a4a;
+}
+
+.gender-select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.gender-select label {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    color: #4a4a4a;
+}
+
+.gender-select input[type="radio"] {
+    margin-right: 5px;
 }
 
 .register-button {
-    width: 100%;
-    padding: 0.85rem;
-    border: none;
-    border-radius: 25px;
-    background-color: #4caf50;
+    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
     color: white;
-    font-size: 1.1rem;
+    border: none;
+    padding: 15px;
+    border-radius: 25px;
+    font-size: 18px;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 1rem;
-    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .register-button:hover {
-    background-color: #66bb6a;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(100, 179, 244, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
-.register-footer {
-    font-size: 0.9rem;
-    color: #ffffff;
-    animation: fadeInUp 2s ease-out;
+.login-link {
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: center;
+    color: #4a4a4a;
 }
 
-.register-footer a {
-    color: #ffffff;
+.login-link a {
+    color: #4facfe;
     text-decoration: none;
     font-weight: bold;
-    font-family: 'Poppins', sans-serif;
 }
 
-.register-footer a:hover {
+.login-link a:hover {
     text-decoration: underline;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 50%, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
+.career-info-section {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
 }
 
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translate3d(0, -50%, 0);
+.career-info-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.career-info-section h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.career-info-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.career-info-section li {
+    margin-bottom: 15px;
+    font-size: 18px;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+}
+
+.career-info-section li::before {
+    content: '•';
+    color: #fda085;
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .register-page {
+        flex-direction: column;
     }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
+
+    .register-form-section,
+    .career-info-section {
+        width: 100%;
     }
 }

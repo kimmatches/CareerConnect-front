@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 
@@ -13,7 +12,6 @@ const InfoBox = ({ number, title, text }) => (
 );
 
 const Home = () => {
-    const [gender, setGender] = useState(null);
     const navigate = useNavigate();
 
     const handleLogin = () => {
@@ -55,20 +53,7 @@ const Home = () => {
             <div className="login-box">
                 <h1 className="login-title">로그인</h1>
                 <p className="welcome-text">취업 준비생 여러분을 응원합니다!</p>
-                <div className="gender-select">
-                    <div
-                        className={`gender-option ${gender === 'male' ? 'selected' : ''}`}
-                        onClick={() => setGender('male')}
-                    >
-                        남성
-                    </div>
-                    <div
-                        className={`gender-option ${gender === 'female' ? 'selected' : ''}`}
-                        onClick={() => setGender('female')}
-                    >
-                        여성
-                    </div>
-                </div>
+
                 <input className="login-input" type="text" placeholder="아이디를 입력하세요" />
                 <input className="login-input" type="password" placeholder="비밀번호를 입력하세요" />
                 <button className="login-button" onClick={handleLogin}>로그인</button>
