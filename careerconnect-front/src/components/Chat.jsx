@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // React Router import 추가
 import './Chat.css';
-
-const SidebarItem = ({ icon, text, onClick, isActive }) => (
-    <div className={`sidebar-item ${isActive ? 'active' : ''}`} onClick={onClick}>
-        <span className="sidebar-icon">{icon}</span>
-        <span>{text}</span>
-    </div>
-);
 
 const ChatListItem = ({ name, message, isOnline, onClick }) => (
     <div className="chat-item" onClick={onClick}>
@@ -60,35 +54,6 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
     );
 };
 
-const CreateChatRoomModal = ({ onClose, onCreateRoom }) => {
-    const [roomName, setRoomName] = useState('');
-
-    const handleCreate = () => {
-        if (roomName.trim() !== '') {
-            onCreateRoom(roomName);
-            onClose();
-        }
-    };
-
-    return (
-        <div className="modal-overlay">
-            <div className="modal">
-                <h2>새 채팅방 만들기</h2>
-                <input
-                    type="text"
-                    value={roomName}
-                    onChange={(e) => setRoomName(e.target.value)}
-                    placeholder="채팅방 이름"
-                />
-                <div className="modal-buttons">
-                    <button onClick={handleCreate}>만들기</button>
-                    <button onClick={onClose}>취소</button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [friendQuery, setFriendQuery] = useState('');
@@ -97,13 +62,12 @@ const Chat = () => {
         { id: 2, name: "AI", message: "오늘도 열심히", isOnline: false },
         { id: 3, name: "친구", message: "안녕하세요", isOnline: true },
     ]);
-    const [chatRooms, setChatRooms] = useState([
-        { id: 1, name: "일반 채팅방", lastMessage: "환영합니다!" },
-    ]);
     const [selectedChat, setSelectedChat] = useState(null);
     const [chatMessages, setChatMessages] = useState({});
     const [activeSection, setActiveSection] = useState('friends');
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+
+    const navigate = useNavigate(); // useNavigate 훅 사용
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -131,17 +95,17 @@ const Chat = () => {
         friend.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredChatRooms = chatRooms.filter(room =>
-        room.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     const openChat = (chat) => {
-        setSelectedChat(chat);
-        if (!chatMessages[chat.id]) {
-            setChatMessages({
-                ...chatMessages,
-                [chat.id]: []
-            });
+        if (chat.name === "나") {
+            navigate('/mypage'); // '나'를 클릭했을 때 새로운 페이지로 이동
+        } else {
+            setSelectedChat(chat);
+            if (!chatMessages[chat.id]) {
+                setChatMessages({
+                    ...chatMessages,
+                    [chat.id]: []
+                });
+            }
         }
     };
 
@@ -169,27 +133,8 @@ const Chat = () => {
         }
     };
 
-    const createChatRoom = (roomName) => {
-        const newRoom = {
-            id: chatRooms.length + 1,
-            name: roomName,
-            lastMessage: "새로운 채팅방이 생성되었습니다.",
-        };
-        setChatRooms([...chatRooms, newRoom]);
-    };
-
     return (
         <div className="chat-container">
-            <div className="sidebar">
-                <div className="sidebar-header">
-                    <h2>메뉴</h2>
-                </div>
-                <SidebarItem icon="👥" text="친구" onClick={() => setActiveSection('friends')} isActive={activeSection === 'friends'} />
-                <SidebarItem icon="💬" text="채팅" onClick={() => setActiveSection('chats')} isActive={activeSection === 'chats'} />
-                <SidebarItem icon="📚" text="커스텀 스터디" onClick={() => setActiveSection('customStudy')} isActive={activeSection === 'customStudy'} />
-                <SidebarItem icon="🔖" text="관심 스터디" onClick={() => setActiveSection('interestedStudy')} isActive={activeSection === 'interestedStudy'} />
-            </div>
-
             <div className="main-content">
                 <div className="search-bar">
                     <div className="search-input">
@@ -234,33 +179,6 @@ const Chat = () => {
                             ))}
                         </div>
                     )}
-
-                    {activeSection === 'chats' && (
-                        <div className="chat-list">
-                            {filteredChatRooms.map(room => (
-                                <ChatListItem
-                                    key={room.id}
-                                    name={room.name}
-                                    message={room.lastMessage}
-                                    onClick={() => openChat(room)}
-                                />
-                            ))}
-                        </div>
-                    )}
-
-                    {activeSection === 'customStudy' && (
-                        <div className="custom-study">
-                            <h2>커스텀 스터디</h2>
-                            <p>여기에 커스텀 스터디 기능을 구현할 수 있습니다.</p>
-                        </div>
-                    )}
-
-                    {activeSection === 'interestedStudy' && (
-                        <div className="interested-study">
-                            <h2>관심 스터디</h2>
-                            <p>여기에 관심 스터디 기능을 구현할 수 있습니다.</p>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -270,13 +188,6 @@ const Chat = () => {
                     onClose={() => setSelectedChat(null)}
                     messages={chatMessages[selectedChat.id] || []}
                     onSendMessage={sendMessage}
-                />
-            )}
-
-            {showCreateRoomModal && (
-                <CreateChatRoomModal
-                    onClose={() => setShowCreateRoomModal(false)}
-                    onCreateRoom={createChatRoom}
                 />
             )}
         </div>

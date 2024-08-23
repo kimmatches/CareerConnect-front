@@ -16,21 +16,6 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
         { id: 2, name: "친구", to: "/chat" },
         { id: 3, name: "스터디방", to: "/groupchat" },
     ]);
-    const [newRoomName, setNewRoomName] = useState('');
-    const [isCreating, setIsCreating] = useState(false);
-
-    const handleCreateRoom = () => {
-        if (newRoomName.trim() !== '') {
-            const newRoom = {
-                id: chatRooms.length + 1,
-                name: newRoomName,
-                to: `/chatroom/${chatRooms.length + 1}`
-            };
-            setChatRooms([...chatRooms, newRoom]);
-            setNewRoomName('');
-            setIsCreating(false);
-        }
-    };
 
     return (
         <div className={`sidebar ${isVisible ? 'visible' : ''}`}>
@@ -40,29 +25,7 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
             {chatRooms.map(room => (
                 <SidebarItem key={room.id} icon="💬" text={room.name} to={room.to} />
             ))}
-            <div className="create-room-container">
-                {isCreating ? (
-                    <div className="create-room-form">
-                        <input
-                            type="text"
-                            value={newRoomName}
-                            onChange={(e) => setNewRoomName(e.target.value)}
-                            placeholder="채팅방 이름"
-                            className="create-room-input"
-                        />
-                        <button onClick={handleCreateRoom} className="create-room-btn">
-                            생성
-                        </button>
-                        <button onClick={() => setIsCreating(false)} className="create-room-cancel-btn">
-                            취소
-                        </button>
-                    </div>
-                ) : (
-                    <button onClick={() => setIsCreating(true)} className="create-room-toggle-btn">
-                        새로운 채팅방 생성
-                    </button>
-                )}
-            </div>
+    
         </div>
     );
 };

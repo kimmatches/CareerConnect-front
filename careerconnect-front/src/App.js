@@ -9,6 +9,7 @@ import SidebarLayout from './components/layout/SidebarLayout'
 import MyChat from './components/mychat/MyChat.jsx'
 // import ChatRoom from './components/ChatRoom';
 import './App.css';
+import MyPage from './components/mypage/MyPage.jsx';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/chat" element={<SidebarLayout><Chat /></SidebarLayout>} />
             <Route path="/groupchat" element={<SidebarLayout><Group /></SidebarLayout>} />
             <Route path="/mychat" element={<SidebarLayout><MyChat /></SidebarLayout>} />
+            <Route path="/mypage" element={<SidebarLayout><MyPage/></SidebarLayout>} />
             {/* <Route path="/chat/:roomId" element={<ChatRoom />} /> */}
           </Routes>
   );
