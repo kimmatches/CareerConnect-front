@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // React Router import 추가
+import { useNavigate } from 'react-router-dom';
 import './Chat.css';
+import ChatWindow from './ChatWindow'; 
 
 const ChatListItem = ({ name, message, isOnline, onClick }) => (
     <div className="chat-item" onClick={onClick}>
@@ -17,43 +18,6 @@ const ChatListItem = ({ name, message, isOnline, onClick }) => (
     </div>
 );
 
-const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
-    const [newMessage, setNewMessage] = useState('');
-
-    const handleSend = () => {
-        if (newMessage.trim() !== '') {
-            onSendMessage(newMessage);
-            setNewMessage('');
-        }
-    };
-
-    return (
-        <div className="chat-window">
-            <div className="chat-header">
-                <h3>{chat.name}</h3>
-                <button onClick={onClose}>×</button>
-            </div>
-            <div className="chat-messages">
-                {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                        {msg.text}
-                    </div>
-                ))}
-            </div>
-            <div className="chat-input">
-                <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="메시지를 입력하세요..."
-                />
-                <button onClick={handleSend}>전송</button>
-            </div>
-        </div>
-    );
-};
-
 const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [friendQuery, setFriendQuery] = useState('');
@@ -62,12 +26,12 @@ const Chat = () => {
         { id: 2, name: "AI", message: "오늘도 열심히", isOnline: false },
         { id: 3, name: "친구", message: "안녕하세요", isOnline: true },
     ]);
+
     const [selectedChat, setSelectedChat] = useState(null);
     const [chatMessages, setChatMessages] = useState({});
-    const [activeSection, setActiveSection] = useState('friends');
-    const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+    const [activeSection, setActiveSection] = useState('friends')
 
-    const navigate = useNavigate(); // useNavigate 훅 사용
+    const navigate = useNavigate(); 
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -97,7 +61,7 @@ const Chat = () => {
 
     const openChat = (chat) => {
         if (chat.name === "나") {
-            navigate('/mypage'); // '나'를 클릭했을 때 새로운 페이지로 이동
+            navigate('/mypage'); 
         } else {
             setSelectedChat(chat);
             if (!chatMessages[chat.id]) {
@@ -158,11 +122,7 @@ const Chat = () => {
                             <button onClick={addFriend} className="add-friend-btn">추가</button>
                         </div>
                     )}
-                    {activeSection === 'chats' && (
-                        <button onClick={() => setShowCreateRoomModal(true)} className="create-room-btn">
-                            새 채팅방
-                        </button>
-                    )}
+                   
                 </div>
 
                 <div className="content-area">

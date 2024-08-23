@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IoMenu } from 'react-icons/io5';
+import { IoMenu, IoLogOutOutline } from 'react-icons/io5';
 import './Sidebar.css';
 
 const SidebarItem = ({ icon, text, to }) => (
@@ -19,13 +19,21 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
 
     return (
         <div className={`sidebar ${isVisible ? 'visible' : ''}`}>
-            <div className="sidebar-header">
-                <IoMenu size={30} color="black" onClick={toggleSidebar} />
+            <div className="sidebar-content">
+                <div className="sidebar-header">
+                    <IoMenu size={30} color="black" onClick={toggleSidebar} />
+                </div>
+                {chatRooms.map(room => (
+                    <SidebarItem key={room.id} icon="💬" text={room.name} to={room.to} />
+                ))}
             </div>
-            {chatRooms.map(room => (
-                <SidebarItem key={room.id} icon="💬" text={room.name} to={room.to} />
-            ))}
-    
+            <div className="sidebar-footer">
+                <SidebarItem
+                    icon={<IoLogOutOutline size={20} />}
+                    text="로그아웃"
+                    to="/"
+                />
+            </div>
         </div>
     );
 };
