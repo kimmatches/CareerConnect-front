@@ -1,0 +1,101 @@
+.mychat-main-chat-area {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+  }
+  
+  .mychat-chat-list {
+    flex-grow: 1;
+    overflow-y: auto; 
+    padding: 20px;
+    background-color: #ffffff; 
+  }
+  .mychat-chat-item {
+    display: flex;
+    align-items: flex-start;
+    cursor: default;
+    pointer-events: none;
+    border-bottom: none;
+  }
+  
+  .mychat-mine {
+    justify-content: flex-end;
+  }
+  
+  .mychat-mine .mychat-chat-bubble {
+    background-color: #dcf8c6;
+    border-radius: 20px 20px 0 20px;
+  }
+  
+  .mychat-friend {
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .mychat-chat-avatar-name {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mychat-friend .mychat-chat-bubble {
+    background-color: #ffffff;
+    border-radius: 20px 20px 20px 0;
+    border: 1px solid #ddd;
+    margin-left: 50px;
+  }
+  
+  .mychat-chat-bubble {
+    padding: 10px;
+    padding-top: 5px;
+    margin-bottom: 20px;
+    max-width: 60%;
+    word-wrap: break-word;
+    pointer-events: none;
+  }
+  
+  .mychat-chat-avatar {
+    background-color: #3498db;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  
+  .mychat-chat-name {
+    font-size: 16px;
+    color: rgb(0, 0, 0);
+    margin-left: 10px; 
+  }
+  
+  .mychat-input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+  }
+  
+  .mychat-input-area input {
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+  }
+  
+  .mychat-input-area button {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .mychat-input-area button:hover {
+    background-color: #2980b9;
+  }
+  
