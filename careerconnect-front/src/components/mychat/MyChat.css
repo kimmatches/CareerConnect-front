@@ -2,14 +2,14 @@
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    height: 90vh; 
+    height: 100%; 
   }
   
   .mychat-chat-list {
     flex-grow: 1;
     overflow-y: auto; 
     padding: 20px;
-    background-color: #f7f7f7; 
+    background-color: #ffffff; 
   }
   .mychat-chat-item {
     display: flex;
