@@ -1,0 +1,145 @@
+.community-container {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.community-nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background-color: #f0f2f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.community-nav button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #65676b;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.community-nav button:hover,
+.community-nav button.active {
+    color: #1877f2;
+}
+
+.community-nav button svg {
+    margin-right: 5px;
+}
+
+.community-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h2 {
+    display: flex;
+    align-items: center;
+    color: #1877f2;
+    margin-bottom: 15px;
+}
+
+.section h2 svg {
+    margin-right: 10px;
+}
+
+.section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.section li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f0f2f5;
+    border-radius: 5px;
+}
+
+.job-postings li, .online-courses li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mentoring button {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.mentoring button:hover {
+    background-color: #166fe5;
+}
+
+.career-roadmap ul {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.career-roadmap li {
+    position: relative;
+    padding: 10px;
+    background-color: #e4e6eb;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.career-roadmap li::after {
+    content: '→';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #65676b;
+}
+
+.career-roadmap li:last-child::after {
+    content: none;
+}
+
+@media (max-width: 768px) {
+    .community-nav {
+        flex-wrap: wrap;
+    }
+
+    .community-nav button {
+        flex: 1 0 40%;
+        margin: 5px;
+    }
+
+    .career-roadmap ul {
+        flex-direction: column;
+    }
+
+    .career-roadmap li {
+        margin-bottom: 15px;
+    }
+
+    .career-roadmap li::after {
+        content: '↓';
+        right: 50%;
+        top: auto;
+        bottom: -20px;
+        transform: translateX(50%);
+    }
+}

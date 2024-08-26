@@ -7,6 +7,7 @@ import Chat from './components/Chat';
 import Group from './components/GroupChat';
 import SidebarLayout from './components/layout/SidebarLayout'
 import MyChat from './components/mychat/MyChat.jsx'
+import Community from './components/community/Community';
 // import ChatRoom from './components/ChatRoom';
 import './App.css';
 import MyPage from './components/mypage/MyPage.jsx';
@@ -21,7 +22,12 @@ const App = () => {
             <Route path="/groupchat" element={<SidebarLayout><Group /></SidebarLayout>} />
             <Route path="/mychat" element={<SidebarLayout><MyChat /></SidebarLayout>} />
             <Route path="/mypage" element={<SidebarLayout><MyPage/></SidebarLayout>} />
+            <Route path="/mypage" element={<SidebarLayout><Group/></SidebarLayout>} />
+            <Route path="/community" element={<SidebarLayout><Community/></SidebarLayout>} />
+            <Route path="/community/:jobCategory" element={<SidebarLayout><Community /></SidebarLayout>} />
+
             {/* <Route path="/chat/:roomId" element={<ChatRoom />} /> */}
+
           </Routes>
   );
 };
