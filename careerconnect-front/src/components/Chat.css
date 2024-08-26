@@ -125,11 +125,6 @@ body {
   margin-left: 10px;
 }
 
-.chat-message {
-  color: var(--light-text-color);
-  margin: 5px 0 0;
-}
-
 .profile-button-container {
   text-align: center;
   margin-top: 20px;

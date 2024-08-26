@@ -1,22 +1,26 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { IoIosClose } from "react-icons/io";
+import { MdSettings } from "react-icons/md";
 import './ChatWindow.css';
-const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
-    const [newMessage, setNewMessage] = useState('');
+import ChatInput from './component/ChatInput';
+
+const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => {
     const [position, setPosition] = useState({ x: 100, y: 100 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const chatWindowRef = useRef(null);
+    const messagesEndRef = useRef(null);
 
-    const handleSend = () => {
-        if (newMessage.trim() !== '') {
-            onSendMessage(newMessage);
-            setNewMessage('');
+    const handleSend = (message) => {
+        if (message.trim() !== '') {
+            onSendMessage(message);
         }
     };
 
     const handleMouseDown = (e) => {
-        if (!isFullScreen && e.target.closest('.chat-header') && !e.target.closest('.fullscreen-toggle')) {
+        if (!isFullScreen && e.target.closest('.chat-window-header') && !e.target.closest('.fullscreen-toggle')) {
             setIsDragging(true);
             const rect = chatWindowRef.current.getBoundingClientRect();
             setDragOffset({
@@ -50,6 +54,23 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
         }
     };
 
+    const toggleSettings = () => {
+        setIsSettingsOpen(!isSettingsOpen);
+    };
+
+    const handleLeaveChat = () => {
+        if (onLeaveChat) {
+            onLeaveChat();
+        }
+        onClose();
+    };
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
     useEffect(() => {
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
@@ -58,6 +79,10 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [handleMouseMove, handleMouseUp]);
+
+    const getInitials = (name) => {
+        return name ? name.charAt(0).toUpperCase() : '';
+    };
 
     const chatWindowStyle = isFullScreen
         ? {
@@ -84,32 +109,60 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage }) => {
             ref={chatWindowRef}
             onMouseDown={handleMouseDown}
         >
-            <div className="chat-header" style={{ cursor: isFullScreen ? 'default' : 'grab' }}>
-                <h3>{chat.name}</h3>
-                <div>
+            <div className="chat-window-header">
+                <div className="header-row">
                     <button className="fullscreen-toggle" onClick={toggleFullScreen}>
                         {isFullScreen ? '🗗' : '🗖'}
                     </button>
-                    <button onClick={onClose}>×</button>
+                    <button onClick={onClose}>
+                        <IoIosClose size={30} />
+                    </button>
+                </div>
+                <div className="header-row2">
+                    <div className="profile-name-wrapper">
+                        <div className="profile-placeholder">
+                            {getInitials(chat.name)}
+                        </div>
+                        <h3>{chat.name}</h3>
+                    </div>
+                    <div className="settings-wrapper">
+                        <button className="settings-button" onClick={toggleSettings}>
+                            <MdSettings size={25} />
+                        </button>
+                        {isSettingsOpen && (
+                            <div className="settings-dropdown">
+                                <button onClick={handleLeaveChat}>채팅방 나가기</button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                        {msg.text}
+                    <div key={index} className={`message-container ${msg.sender === 'me' ? 'sent' : 'received'}`}>
+                        {msg.sender !== 'me' && (
+                            <div className="profile-row">
+                                <div className="profile-placeholder">
+                                    <span className="profile-initials">{getInitials(chat.name)}</span>
+                                </div>
+                                <div className="message-wrapper">
+                                    <span className="chat-room-name">{chat.name}</span>
+                                    <div className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
+                                        {msg.text}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {msg.sender === 'me' && (
+                            <div className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
+                                {msg.text}
+                            </div>
+                        )}
                     </div>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
-            <div className="chat-input">
-                <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="메시지를 입력하세요..."
-                />
-                <button onClick={handleSend}>전송</button>
-            </div>
+            <ChatInput onSendMessage={handleSend} showAttachButton={isFullScreen} /> {/* isFullScreen 상태를 전달 */}
         </div>
     );
 };
