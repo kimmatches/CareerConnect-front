@@ -3,12 +3,18 @@ import './MyChat.css';
 import ChatInput from '../component/ChatInput';
 
 const MyChat = () => {
-  const [messages, setMessages] = useState([]); 
+  const [messages, setMessages] = useState([]);
   const chatListRef = useRef(null);
 
-  const handleSendMessage = (message) => {
-    if (message.trim()) {
-      setMessages([...messages, { sender: '나', content: message, isMine: true }]);
+  const handleSendMessage = (message, file) => {
+    if (message.trim() || file) {
+      const newMessage = {
+        sender: '나',
+        content: message,
+        isMine: true,
+        file: file || null, 
+      };
+      setMessages([...messages, newMessage]);
     }
   };
 
@@ -22,9 +28,20 @@ const MyChat = () => {
     <div className="mychat-main-chat-area">
       <div className="mychat-chat-list" ref={chatListRef}>
         {messages.map((message, index) => (
-          <div key={index} className="mychat-chat-item mychat-mine">
+          <div key={index} className={`mychat-chat-item ${message.isMine ? 'mychat-mine' : 'mychat-other'}`}>
             <div className="mychat-chat-bubble">
-              <p className="mychat-chat-message">{message.content}</p>
+              {message.content && <p className="mychat-chat-message">{message.content}</p>}
+              {message.file && (
+                message.file.type.startsWith('image/') ? (
+                  <img
+                    src={URL.createObjectURL(message.file)}
+                    alt={message.file.name}
+                    className="mychat-chat-image"
+                  />
+                ) : (
+                  <p className="mychat-chat-file">{message.file.name}</p>
+                )
+              )}
             </div>
           </div>
         ))}

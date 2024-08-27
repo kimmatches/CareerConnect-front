@@ -22,18 +22,38 @@
   border-bottom: 1px solid #ddd;
 }
 
+.chat-window-header button {
+  background: none;
+  border: none;
+  color: rgb(0, 0, 0);
+  font-size: 15px; 
+  cursor: pointer;
+  width: 35px; 
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0; 
+}
+
+.chat-window-header button:hover {
+  background-color: #e0e0e0;
+  border-radius: 50%; 
+}
+
 .header-row {
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-bottom: 5px;
 }
 
 .header-row2 {
+  height: 45px;
   width: 100%;
   display: flex;
   justify-content: space-between; 
+  align-items: center; 
 }
 
 .profile-name-wrapper {
@@ -41,18 +61,53 @@
   align-items: center;
 }
 
+.settings-wrapper {
+  position: relative;
+}
+
+.settings-dropdown {
+  position: absolute;
+  top: 100%; 
+  right: 0;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  z-index: 1001;
+  min-width: 150px; 
+}
+
+.settings-dropdown button {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-color);
+  border-radius: var(--border-radius);  
+  transition: background-color 0.2s ease;  
+}
+
+.settings-dropdown button:hover {
+  background-color: #f0f0f0;  
+  border-radius: var(--border-radius); 
+}
+
 .profile-placeholder {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background-color: #3a4750;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-right: 10px;
+  margin-left: 10px;
 }
 
 .chat-messages {
@@ -79,14 +134,14 @@
 .message-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* 세로로 배치된 채팅 이름과 메시지를 왼쪽 정렬 */
-  margin-top: 5px; /* 채팅 이름과 메시지 전체를 아래로 내림 */
+  align-items: flex-start; 
+  margin-top: 5px;
 }
 
 .chat-room-name {
   font-size: 14px;
   color: #333;
-  margin-bottom: 5px; /* 채팅 이름과 메시지 사이 간격 */
+  margin-bottom: 5px;
 }
 
 .message {
@@ -125,58 +180,4 @@
   border: none;
   color: white;
   cursor: pointer;
-}
-
-
-.chat-window-header button {
-  background: none;
-  border: none;
-  color: rgb(0, 0, 0);
-  font-size: 15px; 
-  cursor: pointer;
-  width: 35px; 
-  height: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 0; 
-}
-
-.chat-window-header button:hover {
-  background-color: #e0e0e0;
-  border-radius: 50%; 
-}
-
-.settings-wrapper {
-  position: relative;
-}
-
-.settings-dropdown {
-  position: absolute;
-  top: 100%; 
-  right: 0;
-  background-color: white;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius);
-  padding: 10px;
-  z-index: 1001;
-  min-width: 150px; 
-}
-
-.settings-dropdown button {
-  width: 100%;
-  padding: 10px;
-  background-color: white;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-color);
-  border-radius: var(--border-radius);  
-  transition: background-color 0.2s ease;  
-}
-
-.settings-dropdown button:hover {
-  background-color: #f0f0f0;  
-  border-radius: var(--border-radius); 
 }

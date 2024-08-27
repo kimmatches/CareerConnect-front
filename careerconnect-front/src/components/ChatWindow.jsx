@@ -1,31 +1,24 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react'; 
 import { IoIosClose } from "react-icons/io";
 import { MdSettings } from "react-icons/md";
 import './ChatWindow.css';
 import ChatInput from './component/ChatInput';
 
-const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => {
-    const [position, setPosition] = useState({ x: 100, y: 100 });
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+const ChatWindow = ({ chat, messages, onClose, onLeaveChat, onSendMessage }) => {
+    const [isFullScreen, setIsFullScreen] = useState(false);  
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);  
+    const [isDragging, setIsDragging] = useState(false);  
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });  
     const chatWindowRef = useRef(null);
     const messagesEndRef = useRef(null);
 
-    const handleSend = (message) => {
-        if (message.trim() !== '') {
-            onSendMessage(message);
-        }
-    };
-
     const handleMouseDown = (e) => {
         if (!isFullScreen && e.target.closest('.chat-window-header') && !e.target.closest('.fullscreen-toggle')) {
-            setIsDragging(true);
+            setIsDragging(true); 
             const rect = chatWindowRef.current.getBoundingClientRect();
             setDragOffset({
                 x: e.clientX - rect.left,
-                y: e.clientY - rect.top
+                y: e.clientY - rect.top,
             });
         }
     };
@@ -34,35 +27,25 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
         if (isDragging && !isFullScreen) {
             const newX = e.clientX - dragOffset.x;
             const newY = e.clientY - dragOffset.y;
-            setPosition({ x: newX, y: newY });
+            chatWindowRef.current.style.left = `${newX}px`;
+            chatWindowRef.current.style.top = `${newY}px`;
         }
     }, [isDragging, dragOffset, isFullScreen]);
 
     const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
+        setIsDragging(false);  
     }, []);
+
+    const handleSendMessage = (message, file) => {
+        onSendMessage(message, file);  
+    };
 
     const toggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
-        if (isFullScreen) {
-            const maxX = window.innerWidth - 300;
-            const maxY = window.innerHeight - 400;
-            setPosition({
-                x: Math.min(Math.max(position.x, 0), maxX),
-                y: Math.min(Math.max(position.y, 0), maxY)
-            });
-        }
     };
 
     const toggleSettings = () => {
         setIsSettingsOpen(!isSettingsOpen);
-    };
-
-    const handleLeaveChat = () => {
-        if (onLeaveChat) {
-            onLeaveChat();
-        }
-        onClose();
     };
 
     useEffect(() => {
@@ -80,10 +63,6 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
         };
     }, [handleMouseMove, handleMouseUp]);
 
-    const getInitials = (name) => {
-        return name ? name.charAt(0).toUpperCase() : '';
-    };
-
     const chatWindowStyle = isFullScreen
         ? {
             position: 'fixed',
@@ -91,15 +70,15 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
             top: 0,
             width: '100%',
             height: '100%',
-            zIndex: 1000
+            zIndex: 1000,
         }
         : {
             position: 'fixed',
-            left: `${position.x}px`,
-            top: `${position.y}px`,
+            left: '100px',
+            top: '100px',
             width: '300px',
             height: '400px',
-            cursor: isDragging ? 'grabbing' : 'auto'
+            cursor: isDragging ? 'grabbing' : 'auto',
         };
 
     return (
@@ -121,7 +100,7 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
                 <div className="header-row2">
                     <div className="profile-name-wrapper">
                         <div className="profile-placeholder">
-                            {getInitials(chat.name)}
+                            {chat.name[0].toUpperCase()}
                         </div>
                         <h3>{chat.name}</h3>
                     </div>
@@ -131,7 +110,7 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
                         </button>
                         {isSettingsOpen && (
                             <div className="settings-dropdown">
-                                <button onClick={handleLeaveChat}>채팅방 나가기</button>
+                                <button onClick={onLeaveChat}>채팅방 나가기</button>
                             </div>
                         )}
                     </div>
@@ -139,30 +118,58 @@ const ChatWindow = ({ chat, onClose, messages, onSendMessage, onLeaveChat }) => 
             </div>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
-                    <div key={index} className={`message-container ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                        {msg.sender !== 'me' && (
+                    <div key={index} className={`message-container ${msg.isMine ? 'sent' : 'received'}`}>
+                        {!msg.isMine && (
                             <div className="profile-row">
                                 <div className="profile-placeholder">
-                                    <span className="profile-initials">{getInitials(chat.name)}</span>
+                                    {msg.sender[0].toUpperCase()}
                                 </div>
                                 <div className="message-wrapper">
-                                    <span className="chat-room-name">{chat.name}</span>
-                                    <div className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                                        {msg.text}
+                                    <span className="chat-room-name">{msg.sender}</span>
+                                    <div className="message received">
+                                        {msg.file ? (
+                                            msg.file.type.startsWith('image/') ? (
+                                                <img
+                                                    src={URL.createObjectURL(msg.file)}
+                                                    alt={msg.file.name}
+                                                    style={{ maxWidth: '100%', borderRadius: '10px' }}
+                                                />
+                                            ) : (
+                                                <a href={URL.createObjectURL(msg.file)} download={msg.file.name}>
+                                                    {msg.file.name}
+                                                </a>
+                                            )
+                                        ) : (
+                                            msg.content
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         )}
-                        {msg.sender === 'me' && (
-                            <div className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`}>
-                                {msg.text}
+                        {msg.isMine && (
+                            <div className="message sent">
+                                {msg.file ? (
+                                    msg.file.type.startsWith('image/') ? (
+                                        <img
+                                            src={URL.createObjectURL(msg.file)}
+                                            alt={msg.file.name}
+                                            style={{ maxWidth: '100%', borderRadius: '10px' }}
+                                        />
+                                    ) : (
+                                        <a href={URL.createObjectURL(msg.file)} download={msg.file.name}>
+                                            {msg.file.name}
+                                        </a>
+                                    )
+                                ) : (
+                                    msg.content
+                                )}
                             </div>
                         )}
                     </div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
-            <ChatInput onSendMessage={handleSend} showAttachButton={isFullScreen} /> {/* isFullScreen 상태를 전달 */}
+            <ChatInput onSendMessage={handleSendMessage} showAttachButton={isFullScreen} />
         </div>
     );
 };

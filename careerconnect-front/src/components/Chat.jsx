@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Chat.css';
-import ChatWindow from './ChatWindow'; 
+import ChatWindow from './ChatWindow';
 
 const ChatListItem = ({ name, message, isOnline, onClick }) => (
     <div className="chat-item" onClick={onClick}>
-        <div className="chat-avatar">
-            {name[0]}
-        </div>
+        <div className="chat-avatar">{name[0]}</div>
         <div className="chat-content">
             <div className="chat-name">
                 {name}
@@ -22,32 +20,28 @@ const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [friendQuery, setFriendQuery] = useState('');
     const [friends, setFriends] = useState([
-        { id: 1, name: "나", message: "안녕하세요", isOnline: true },
-        { id: 2, name: "AI", message: "오늘도 열심히", isOnline: false },
-        { id: 3, name: "친구", message: "안녕하세요", isOnline: true },
+        { id: 1, name: '나', message: '안녕하세요', isOnline: true },
+        { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: false },
+        { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
     ]);
 
-    const [selectedChat, setSelectedChat] = useState(null);
-    const [chatMessages, setChatMessages] = useState({});
-    const [activeSection, setActiveSection] = useState('friends')
+    const [openChats, setOpenChats] = useState([]); // 여러 개의 열린 채팅방 상태 관리
+    const [chatMessages, setChatMessages] = useState({}); // 채팅방 메시지를 객체로 관리
+    const [activeSection, setActiveSection] = useState('friends');
 
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    const handleSearch = (e) => setSearchQuery(e.target.value);
 
-    const handleFriendSearch = (e) => {
-        setFriendQuery(e.target.value);
-    };
+    const handleFriendSearch = (e) => setFriendQuery(e.target.value);
 
     const addFriend = () => {
         if (friendQuery.trim() !== '') {
             const newFriend = {
                 id: friends.length + 1,
                 name: friendQuery,
-                message: "새로운 친구입니다.",
-                isOnline: false
+                message: '새로운 친구입니다.',
+                isOnline: false,
             };
             setFriends([...friends, newFriend]);
             setFriendQuery('');
@@ -55,46 +49,67 @@ const Chat = () => {
         }
     };
 
-    const filteredFriends = friends.filter(friend =>
+    const filteredFriends = friends.filter((friend) =>
         friend.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const openChat = (chat) => {
-        if (chat.name === "나") {
-            navigate('/mypage'); 
+        if (chat.name === '나') {
+            navigate('/mypage');
         } else {
-            setSelectedChat(chat);
+            // 이미 열린 채팅방이 아니면 추가
+            if (!openChats.some((openChat) => openChat.id === chat.id)) {
+                setOpenChats([...openChats, chat]); // 열린 채팅방 추가
+            }
+            // 채팅 메시지 초기화
             if (!chatMessages[chat.id]) {
                 setChatMessages({
                     ...chatMessages,
-                    [chat.id]: []
+                    [chat.id]: [],
                 });
             }
         }
     };
 
-    const sendMessage = (message) => {
-        if (selectedChat) {
-            const updatedMessages = [
-                ...(chatMessages[selectedChat.id] || []),
-                { sender: 'me', text: message }
-            ];
-            setChatMessages({
-                ...chatMessages,
-                [selectedChat.id]: updatedMessages
-            });
+    const sendMessage = (chatId, message, file) => {
+        const newMessage = {
+            sender: '나',
+            content: message,
+            isMine: true,
+            file: file || null,
+        };
 
-            setTimeout(() => {
-                const echoResponse = [
-                    ...updatedMessages,
-                    { sender: selectedChat.name, text: `에코: ${message}` }
-                ];
-                setChatMessages({
-                    ...chatMessages,
-                    [selectedChat.id]: echoResponse
-                });
-            }, 1000);
-        }
+        const updatedMessages = [...(chatMessages[chatId] || []), newMessage];
+        setChatMessages({
+            ...chatMessages,
+            [chatId]: updatedMessages,
+        });
+
+        // 자동 응답 메시지 추가
+        setTimeout(() => {
+            const replyMessage = {
+                sender: friends.find((friend) => friend.id === chatId)?.name,
+                content: '자동 답장입니다!',
+                isMine: false,
+                file: null,
+            };
+            setChatMessages((prevMessages) => ({
+                ...prevMessages,
+                [chatId]: [...(prevMessages[chatId] || []), replyMessage],
+            }));
+        }, 1000);
+    };
+
+    const closeChat = (chatId) => {
+        setOpenChats(openChats.filter((chat) => chat.id !== chatId)); // 채팅방 닫기
+    };
+
+    const leaveChat = (chatId) => {
+        setChatMessages({
+            ...chatMessages,
+            [chatId]: [], // 선택된 채팅방의 메시지 삭제
+        });
+        closeChat(chatId); // 채팅창 닫기
     };
 
     return (
@@ -119,16 +134,17 @@ const Chat = () => {
                                 value={friendQuery}
                                 onChange={handleFriendSearch}
                             />
-                            <button onClick={addFriend} className="add-friend-btn">추가</button>
+                            <button onClick={addFriend} className="add-friend-btn">
+                                추가
+                            </button>
                         </div>
                     )}
-                   
                 </div>
 
                 <div className="content-area">
                     {activeSection === 'friends' && (
                         <div className="chat-list">
-                            {filteredFriends.map(friend => (
+                            {filteredFriends.map((friend) => (
                                 <ChatListItem
                                     key={friend.id}
                                     name={friend.name}
@@ -142,14 +158,16 @@ const Chat = () => {
                 </div>
             </div>
 
-            {selectedChat && (
+            {openChats.map((chat) => (
                 <ChatWindow
-                    chat={selectedChat}
-                    onClose={() => setSelectedChat(null)}
-                    messages={chatMessages[selectedChat.id] || []}
-                    onSendMessage={sendMessage}
+                    key={chat.id}
+                    chat={chat}
+                    messages={chatMessages[chat.id] || []} // 선택된 채팅방의 메시지 전달
+                    onClose={() => closeChat(chat.id)} // 창 닫기
+                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)} // 메시지 전송
+                    onLeaveChat={() => leaveChat(chat.id)} // 채팅방 나가기
                 />
-            )}
+            ))}
         </div>
     );
 };
