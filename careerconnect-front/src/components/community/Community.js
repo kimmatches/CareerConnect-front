@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiBriefcase, FiTrendingUp, FiUsers, FiMap, FiBook } from 'react-icons/fi';
+import { FiBriefcase, FiTrendingUp, FiUsers, FiMap, FiBook, FiRss, FiCode, FiPenTool, FiTrello, FiBarChart, FiServer, FiEdit, FiUserPlus } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useParams } from 'react-router-dom';
 import './Community.css';
@@ -234,14 +234,60 @@ const OnlineCourses = ({ data }) => (
     </div>
 );
 
+const GoogleNewsButton = ({ jobTitle }) => {
+    const handleClick = () => {
+        const searchQuery = encodeURIComponent(`${jobTitle} 직업 뉴스`);
+        window.open(`https://news.google.com/search?q=${searchQuery}&hl=ko&gl=KR&ceid=KR:ko`, '_blank');
+    };
+
+    return (
+        <button className="google-news-button" onClick={handleClick}>
+            <FiRss /> 구글 뉴스에서 소식보기
+        </button>
+    );
+};
+
+const JobIcon = ({ jobCategory }) => {
+    const getIcon = (category) => {
+        switch(category) {
+            case 'developer': return <FiCode className="job-icon" />;
+            case 'designer': return <FiPenTool className="job-icon" />;
+            case 'marketer': return <FiTrello className="job-icon" />;
+            case 'planner': return <FiMap className="job-icon" />;
+            case 'dataAnalyst': return <FiBarChart className="job-icon" />;
+            case 'itManager': return <FiServer className="job-icon" />;
+            case 'contentWriter': return <FiEdit className="job-icon" />;
+            case 'hrManager': return <FiUserPlus className="job-icon" />;
+            default: return <FiBriefcase className="job-icon" />;
+        }
+    };
+
+    return (
+        <div className={`job-icon-container ${jobCategory}`}>
+            {getIcon(jobCategory)}
+        </div>
+    );
+};
+
 const Community = () => {
-    const { jobCategory } = useParams(); // Extract jobCategory from URL params
+    const { jobCategory } = useParams();
     const [activeTab, setActiveTab] = useState('jobs');
-    const data = jobData[jobCategory] || jobData.developer; // Fallback to developer if jobCategory is invalid
+    const data = jobData[jobCategory] || jobData.developer;
+
+    if (!jobCategory || !data) {
+        return (
+            <div className="community-container">
+                <h1>커리어 Hub</h1>
+                <p>크롤링하여 꾸밀부분</p>
+            </div>
+        );
+    }
 
     return (
         <div className="community-container">
             <h1>{data.title} Hub</h1>
+            <JobIcon jobCategory={jobCategory} />
+            <GoogleNewsButton jobTitle={data.title} />
             <nav className="community-nav">
                 <button onClick={() => setActiveTab('jobs')} className={activeTab === 'jobs' ? 'active' : ''}>
                     <FiBriefcase /> 채용 정보

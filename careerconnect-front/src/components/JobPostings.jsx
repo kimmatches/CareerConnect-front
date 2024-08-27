@@ -20,7 +20,7 @@ const JobPostings = () => {
 
             // 임시 더미 데이터
             const data = [
-                { id: 1, company: "테크 기업 A", position: "프론트엔드 개발자", location: "서울", salary: "협의 후 결정" },
+                { id: 1, company: "테크 기업 b", position: "프론트엔드 개발자", location: "서울", salary: "협의 후 결정" },
                 { id: 2, company: "스타트업 B", position: "백엔드 개발자", location: "부산", salary: "4000-5000만원" },
                 { id: 3, company: "대기업 C", position: "풀스택 개발자", location: "대전", salary: "5000-6000만원" },
                 { id: 4, company: "IT 기업 D", position: "모바일 앱 개발자", location: "인천", salary: "3500-4500만원" },
@@ -40,7 +40,7 @@ const JobPostings = () => {
 
     return (
         <div className="job-postings">
-            <h2>최신 채용 정보</h2>
+            <h2>최신 채용 정보-크롤링</h2>
             <div className="job-list">
                 {jobPostings.map((job) => (
                     <div key={job.id} className="job-item">
