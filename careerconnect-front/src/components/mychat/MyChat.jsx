@@ -12,7 +12,11 @@ const MyChat = () => {
         sender: '나',
         content: message,
         isMine: true,
-        file: file || null, 
+        file: file ? {
+          name: file.name,
+          url: URL.createObjectURL(file), // URL 생성
+          type: file.type
+        } : null,
       };
       setMessages([...messages, newMessage]);
     }
@@ -34,12 +38,18 @@ const MyChat = () => {
               {message.file && (
                 message.file.type.startsWith('image/') ? (
                   <img
-                    src={URL.createObjectURL(message.file)}
+                    src={message.file.url}
                     alt={message.file.name}
                     className="mychat-chat-image"
                   />
                 ) : (
-                  <p className="mychat-chat-file">{message.file.name}</p>
+                  <a
+                    href={message.file.url}
+                    download={message.file.name}
+                    className="mychat-chat-file-link"
+                  >
+                    {message.file.name}
+                  </a>
                 )
               )}
             </div>

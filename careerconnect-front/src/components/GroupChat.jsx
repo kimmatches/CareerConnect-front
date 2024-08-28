@@ -60,7 +60,7 @@ const GroupChatSidebar = ({ groups, myGroups, onSelectGroup, onCreateGroup, onli
 const ChatMessage = ({ message, isOwnMessage }) => {
     return (
         <div className={`chat-message ${isOwnMessage ? 'own-message' : ''}`}>
-            <div className="message-avatar">{message.sender[0]}</div>
+            {!isOwnMessage && <div className="message-avatar">{message.sender[0]}</div>}
             <div className="message-content">
                 <div className="message-sender">{message.sender}</div>
                 <div className="message-text">

@@ -44,3 +44,10 @@
 .mychat-chat-file {
   margin-top: 10px; 
 }
+
+.mychat-chat-file-link {
+  color: blue; 
+  text-decoration: underline; 
+  cursor: pointer; 
+  pointer-events: auto;
+}
