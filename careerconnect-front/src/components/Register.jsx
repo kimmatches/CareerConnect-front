@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { userApi } from '../api/api';  
 import './Register.css';
 
 const Register = () => {
@@ -9,15 +10,28 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-        console.log('회원가입:', { username, nickname });
-        alert('회원가입이 완료되었습니다!');
-        navigate('/');
+
+        const registerData = {
+            loginId: username,
+            username: nickname,
+            passwordHash: password, 
+        };
+
+        try {
+            const response = await userApi.registerUser(registerData);  
+            console.log('회원가입 성공:', response);
+            alert('회원가입이 완료되었습니다!');
+            navigate('/'); 
+        } catch (error) {
+            console.error('회원가입 실패:', error);
+            alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+        }
     };
 
     return (
