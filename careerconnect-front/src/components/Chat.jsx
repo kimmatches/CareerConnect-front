@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Chat.css';
 import ChatWindow from './ChatWindow';
 
@@ -18,34 +19,62 @@ const ChatListItem = ({ name, message, isOnline, onClick }) => (
 
 const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [friendQuery, setFriendQuery] = useState('');
-    const [friends, setFriends] = useState([
-        { id: 1, name: '나', message: '안녕하세요', isOnline: true },
-        { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: false },
-        { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
-    ]);
+    const [username, setUsername] = useState('');
+    const [friends, setFriends] = useState(() => {
+        // localStorage에서 저장된 친구 목록을 불러옵니다.
+        const savedFriends = localStorage.getItem('friends');
+        return savedFriends ? JSON.parse(savedFriends) : [
+            { id: 1, name: '나', message: '안녕하세요', isOnline: true },
+            { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: false },
+            { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
+        ];
+    });
 
-    const [openChats, setOpenChats] = useState([]); 
+    const [openChats, setOpenChats] = useState([]);
     const [chatMessages, setChatMessages] = useState({});
     const [activeSection, setActiveSection] = useState('friends');
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        // 친구 목록이 변경될 때마다 localStorage에 저장합니다.
+        localStorage.setItem('friends', JSON.stringify(friends));
+    }, [friends]);
+
     const handleSearch = (e) => setSearchQuery(e.target.value);
 
-    const handleFriendSearch = (e) => setFriendQuery(e.target.value);
+    const handleUsernameChange = (e) => setUsername(e.target.value);
 
     const addFriend = () => {
-        if (friendQuery.trim() !== '') {
-            const newFriend = {
-                id: friends.length + 1,
-                name: friendQuery,
-                message: '새로운 친구입니다.',
-                isOnline: false,
-            };
-            setFriends([...friends, newFriend]);
-            setFriendQuery('');
-            alert(`${friendQuery}님을 친구로 추가했습니다!`);
+        if (username.trim() !== '') {
+            const friendExists = friends.some(friend => friend.name === username);
+
+            if (friendExists) {
+                alert('이미 추가된 친구입니다.');
+                return;
+            }
+
+            axios.get(`/open-api/user/list/${username}`)
+                .then(response => {
+                    if (response.data.result.resultCode === 200) {
+                        const user = response.data.body;
+                        const newFriend = {
+                            id: user.id,
+                            name: user.username,
+                            message: '새로운 친구입니다.',
+                            isOnline: false,
+                        };
+                        setFriends([...friends, newFriend]);
+                        setUsername('');
+                        alert(`${user.username}님을 친구로 추가했습니다!`);
+                    } else {
+                        alert('친구 추가에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to add friend:', error);
+                    alert('친구 추가에 실패했습니다.');
+                });
         }
     };
 
@@ -58,9 +87,9 @@ const Chat = () => {
             navigate('/mypage');
         } else {
             if (!openChats.some((openChat) => openChat.id === chat.id)) {
-                setOpenChats([...openChats, chat]); 
+                setOpenChats([...openChats, chat]);
             }
-            
+
             if (!chatMessages[chat.id]) {
                 setChatMessages({
                     ...chatMessages,
@@ -84,7 +113,6 @@ const Chat = () => {
             [chatId]: updatedMessages,
         });
 
-        // 자동 응답 메시지 추가
         setTimeout(() => {
             const replyMessage = {
                 sender: friends.find((friend) => friend.id === chatId)?.name,
@@ -130,8 +158,8 @@ const Chat = () => {
                             <input
                                 type="text"
                                 placeholder="친구 찾기"
-                                value={friendQuery}
-                                onChange={handleFriendSearch}
+                                value={username}
+                                onChange={handleUsernameChange}
                             />
                             <button onClick={addFriend} className="add-friend-btn">
                                 추가
@@ -161,10 +189,10 @@ const Chat = () => {
                 <ChatWindow
                     key={chat.id}
                     chat={chat}
-                    messages={chatMessages[chat.id] || []} 
+                    messages={chatMessages[chat.id] || []}
                     onClose={() => closeChat(chat.id)}
-                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)} 
-                    onLeaveChat={() => leaveChat(chat.id)} 
+                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)}
+                    onLeaveChat={() => leaveChat(chat.id)}
                 />
             ))}
         </div>
