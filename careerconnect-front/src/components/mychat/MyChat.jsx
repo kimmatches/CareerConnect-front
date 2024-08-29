@@ -14,7 +14,7 @@ const MyChat = () => {
         isMine: true,
         file: file ? {
           name: file.name,
-          url: URL.createObjectURL(file), // URL 생성
+          url: URL.createObjectURL(file), 
           type: file.type
         } : null,
       };

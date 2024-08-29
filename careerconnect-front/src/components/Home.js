@@ -1,4 +1,6 @@
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { userApi } from '../api/api'; 
 import './Home.css';
 
 const InfoBox = ({ number, title, text }) => (
@@ -13,10 +15,24 @@ const InfoBox = ({ number, title, text }) => (
 
 const Home = () => {
     const navigate = useNavigate();
+    const [id, setId] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        // 로그인 버튼 클릭 시 즉시 채팅 페이지로 이동
-        navigate('/chat');
+    const handleLogin = async () => {
+        const loginData = {
+            loginId: id,
+            passwordHash: password,
+        };
+
+        try {
+            const response = await userApi.loginUser(loginData); 
+            console.log('로그인 성공:', response);
+            alert('로그인 성공!');
+            navigate('/chat'); 
+        } catch (error) {
+            console.error('로그인 실패:', error);
+            alert('로그인에 실패했습니다. 다시 시도해주세요.');
+        }
     };
 
     return (
@@ -35,7 +51,7 @@ const Home = () => {
                     <InfoBox
                         number="02"
                         title="면접 준비"
-                        text="전문가의 및 선배들의 조언과 면접 준비 전략을 공유하세요."
+                        text="전문가 및 선배들의 조언과 면접 준비 전략을 공유하세요."
                     />
                     <InfoBox
                         number="03"
@@ -54,8 +70,20 @@ const Home = () => {
                 <h1 className="login-title">로그인</h1>
                 <p className="welcome-text">취업 준비생 여러분을 응원합니다!</p>
 
-                <input className="login-input" type="text" placeholder="아이디를 입력하세요" />
-                <input className="login-input" type="password" placeholder="비밀번호를 입력하세요" />
+                <input
+                    className="login-input"
+                    type="text"
+                    placeholder="아이디를 입력하세요"
+                    value={id}
+                    onChange={(e) => setId(e.target.value)} 
+                />
+                <input
+                    className="login-input"
+                    type="password"
+                    placeholder="비밀번호를 입력하세요"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)} 
+                />
                 <button className="login-button" onClick={handleLogin}>로그인</button>
                 <div className="login-footer">
                     <Link to="/register">회원가입</Link>

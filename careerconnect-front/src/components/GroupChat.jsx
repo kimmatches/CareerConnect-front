@@ -316,7 +316,7 @@ const GroupChat = () => {
                 </>
             )}
         </div>
-    );
+    );  
 };
 
 export default GroupChat;

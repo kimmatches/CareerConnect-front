@@ -25,8 +25,8 @@ const Chat = () => {
         { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
     ]);
 
-    const [openChats, setOpenChats] = useState([]); // 여러 개의 열린 채팅방 상태 관리
-    const [chatMessages, setChatMessages] = useState({}); // 채팅방 메시지를 객체로 관리
+    const [openChats, setOpenChats] = useState([]); 
+    const [chatMessages, setChatMessages] = useState({});
     const [activeSection, setActiveSection] = useState('friends');
 
     const navigate = useNavigate();
@@ -57,11 +57,10 @@ const Chat = () => {
         if (chat.name === '나') {
             navigate('/mypage');
         } else {
-            // 이미 열린 채팅방이 아니면 추가
             if (!openChats.some((openChat) => openChat.id === chat.id)) {
-                setOpenChats([...openChats, chat]); // 열린 채팅방 추가
+                setOpenChats([...openChats, chat]); 
             }
-            // 채팅 메시지 초기화
+            
             if (!chatMessages[chat.id]) {
                 setChatMessages({
                     ...chatMessages,
@@ -101,15 +100,15 @@ const Chat = () => {
     };
 
     const closeChat = (chatId) => {
-        setOpenChats(openChats.filter((chat) => chat.id !== chatId)); // 채팅방 닫기
+        setOpenChats(openChats.filter((chat) => chat.id !== chatId));
     };
 
     const leaveChat = (chatId) => {
         setChatMessages({
             ...chatMessages,
-            [chatId]: [], // 선택된 채팅방의 메시지 삭제
+            [chatId]: [],
         });
-        closeChat(chatId); // 채팅창 닫기
+        closeChat(chatId);
     };
 
     return (
@@ -162,10 +161,10 @@ const Chat = () => {
                 <ChatWindow
                     key={chat.id}
                     chat={chat}
-                    messages={chatMessages[chat.id] || []} // 선택된 채팅방의 메시지 전달
-                    onClose={() => closeChat(chat.id)} // 창 닫기
-                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)} // 메시지 전송
-                    onLeaveChat={() => leaveChat(chat.id)} // 채팅방 나가기
+                    messages={chatMessages[chat.id] || []} 
+                    onClose={() => closeChat(chat.id)}
+                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)} 
+                    onLeaveChat={() => leaveChat(chat.id)} 
                 />
             ))}
         </div>
