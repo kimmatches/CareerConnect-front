@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { useUser } from '../UserProvider'; 
+import { useUser } from '../UserProvider';
+import { useNavigate } from 'react-router-dom';
+import './Chatroom.css';
+import { Maximize, Minimize, ArrowLeft } from 'lucide-react';
 
 const ChatRoom = () => {
     const { currentUser } = useUser();
+    const navigate = useNavigate();
     const [message, setMessage] = useState('');
     const [chatMessages, setChatMessages] = useState([]);
     const [stompClient, setStompClient] = useState(null);
+    const [isMaximized, setIsMaximized] = useState(false);
 
     useEffect(() => {
         if (!currentUser) {
@@ -25,10 +30,8 @@ const ChatRoom = () => {
             onConnect: () => {
                 console.log("WebSocket 연결 성공");
 
-               
                 client.subscribe('/topic/group', onMessageReceived);
 
-                
                 client.publish({
                     destination: '/app/newUser',
                     body: JSON.stringify({ sender: currentUser.id, content: `${currentUser.id}님이 입장했습니다.` }),
@@ -54,13 +57,12 @@ const ChatRoom = () => {
     };
 
     const sendMessage = () => {
-        if (stompClient && stompClient.connected) {
+        if (stompClient && stompClient.connected && message.trim() !== '') {
             const chatMessage = {
                 sender: currentUser.id,
                 content: message,
             };
 
-           
             stompClient.publish({
                 destination: `/app/sendMessage`,
                 body: JSON.stringify(chatMessage),
@@ -70,23 +72,49 @@ const ChatRoom = () => {
         }
     };
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    };
+
+    const toggleMaximize = () => {
+        setIsMaximized(!isMaximized);
+    };
+
+    const handleBack = () => {
+        navigate('/groupchat');
+    };
+
     return (
-        <div className="chat-room">
-            <h2>채팅방</h2>
+        <div className={`chat-room ${isMaximized ? 'maximized' : ''}`}>
+            <div className="chat-header">
+                <button className="back-btn" onClick={handleBack}>
+                    <ArrowLeft size={24} />
+                </button>
+                <h2>채팅방</h2>
+                <button className="maximize-btn" onClick={toggleMaximize}>
+                    {isMaximized ? <Minimize size={24} /> : <Maximize size={24} />}
+                </button>
+            </div>
             <div className="messages">
                 {chatMessages.map((msg, index) => (
-                    <div key={index} className="message">
-                        <strong>{msg.sender}:</strong> {msg.content}
+                    <div key={index} className={`message ${msg.sender === currentUser.id ? 'sent' : 'received'}`}>
+                        {msg.sender !== currentUser.id && <div className="sender">{msg.sender}</div>}
+                        <div className="content">{msg.content}</div>
                     </div>
                 ))}
             </div>
-            <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="메시지를 입력하세요..."
-            />
-            <button onClick={sendMessage}>전송</button>
+            <div className="input-area">
+                <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="메시지를 입력하세요..."
+                />
+                <button onClick={sendMessage}>전송</button>
+            </div>
         </div>
     );
 };

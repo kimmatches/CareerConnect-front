@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { userApi } from '../api/api';
 import './Chat.css';
 import ChatWindow from './ChatWindow';
+import AiChatWindow from './AiChatWindow'; // AI 채팅 전용 컴포넌트
 
 const ChatListItem = ({ name, message, isOnline, onClick }) => (
     <div className="chat-item" onClick={onClick}>
@@ -39,6 +40,17 @@ const Chat = () => {
         localStorage.setItem('friends', JSON.stringify(friends));
     }, [friends]);
 
+    const fetchApiKey = async () => {
+        try {
+            const response = await userApi.getApiKey();
+            const apiKey = response.data.key;
+            console.log("API KEY 정상출력");
+            return apiKey;
+        } catch (error) {
+            console.error('Error fetching API key:', error);
+        }
+    };
+
     const handleSearch = (e) => setSearchQuery(e.target.value);
 
     const handleUsernameChange = (e) => setUsername(e.target.value);
@@ -73,17 +85,6 @@ const Chat = () => {
                     console.error('Failed to add friend:', error);
                     alert('친구 추가에 실패했습니다.');
                 });
-        }
-    };
-
-    const fetchApiKey = async () => {
-        try {
-            const response = await userApi.getApiKey();
-            const apiKey = response.data.key;
-            console.log("API KEY 정상출력");
-            return apiKey;
-        } catch (error) {
-            console.error('Error fetching API key:', error);
         }
     };
 
@@ -222,18 +223,28 @@ const Chat = () => {
             </div>
 
             {openChats.map((chat) => (
-                <ChatWindow
-                    key={chat.id}
-                    chat={chat}
-                    messages={chatMessages[chat.id] || []}
-                    onClose={() => closeChat(chat.id)}
-                    onSendMessage={(message, file) => sendMessage(chat.id, message, file)}
-                    onLeaveChat={() => leaveChat(chat.id)}
-                />
+                chat.name === 'AI' ? (
+                    <AiChatWindow
+                        key={chat.id}
+                        chat={chat}
+                        messages={chatMessages[chat.id] || []}
+                        onClose={() => closeChat(chat.id)}
+                        onSendMessage={(message, file) => sendMessage(chat.id, message, file)}
+                        onLeaveChat={() => leaveChat(chat.id)}
+                    />
+                ) : (
+                    <ChatWindow
+                        key={chat.id}
+                        chat={chat}
+                        messages={chatMessages[chat.id] || []}
+                        onClose={() => closeChat(chat.id)}
+                        onSendMessage={(message, file) => sendMessage(chat.id, message, file)}
+                        onLeaveChat={() => leaveChat(chat.id)}
+                    />
+                )
             ))}
         </div>
     );
 };
 
 export default Chat;
-
