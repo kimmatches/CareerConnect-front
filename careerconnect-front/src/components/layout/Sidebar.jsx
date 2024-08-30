@@ -27,8 +27,9 @@ const Sidebar = ({ isVisible, toggleSidebar }) => {
         { id: 1, name: "나의 채팅", to: "/mychat", icon: "💬" },
         { id: 2, name: "친구", to: "/chat", icon: "👥" },
         { id: 3, name: "스터디방", to: "/groupchat", icon: "📚" },
+        { id: 4, name: "그룹톡방", to: "/chatroom", icon: "📚" },
         {
-            id: 4,
+            id: 5,
             name: "커리어Hub",
             to: "/community",
             icon: "💼",
