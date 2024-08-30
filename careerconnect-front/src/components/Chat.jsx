@@ -21,11 +21,10 @@ const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [username, setUsername] = useState('');
     const [friends, setFriends] = useState(() => {
-        // localStorage에서 저장된 친구 목록을 불러옵니다.
         const savedFriends = localStorage.getItem('friends');
         return savedFriends ? JSON.parse(savedFriends) : [
             { id: 1, name: '나', message: '안녕하세요', isOnline: true },
-            { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: false },
+            { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: true },
             { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
         ];
     });
@@ -37,7 +36,6 @@ const Chat = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // 친구 목록이 변경될 때마다 localStorage에 저장합니다.
         localStorage.setItem('friends', JSON.stringify(friends));
     }, [friends]);
 
@@ -78,9 +76,84 @@ const Chat = () => {
         }
     };
 
-    const filteredFriends = friends.filter((friend) =>
-        friend.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const fetchApiKey = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/open-api/gpt/api-key'); // API 키를 백엔드에서 가져오기
+            const apiKey = response.data.key;
+            console.log("API KEY 정상출력");
+            return apiKey;
+        } catch (error) {
+            console.error('Error API key:', error);
+        }
+    };
+
+    const sendMessage = (chatId, message, file) => {
+        const newMessage = {
+            sender: '나',
+            content: message,
+            isMine: true,
+            file: file || null,
+        };
+    
+        const updatedMessages = [...(chatMessages[chatId] || []), newMessage];
+        setChatMessages({
+            ...chatMessages,
+            [chatId]: updatedMessages,
+        });
+    
+        const chat = friends.find((friend) => friend.id === chatId);
+    
+        if (chat.name === 'AI') {
+            // GPT와의 채팅 처리
+            fetchApiKey()
+                .then((apiKey) => {
+                    return axios.post(
+                        'https://api.openai.com/v1/chat/completions',
+                        {
+                            model: 'gpt-3.5-turbo',
+                            messages: [{ role: 'user', content: message }],
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    );
+                })
+                .then((response) => {
+                    const gptReply = {
+                        sender: 'AI',
+                        content: response.data.choices[0].message.content,
+                        isMine: false,
+                        file: null,
+                    };
+    
+                    setChatMessages((prevMessages) => ({
+                        ...prevMessages,
+                        [chatId]: [...(prevMessages[chatId] || []), gptReply],
+                    }));
+                })
+                .catch((error) => {
+                    console.error('Error communicating with GPT:', error);
+                });
+        } else {
+            // 친구 자동 응답 처리
+            setTimeout(() => {
+                const replyMessage = {
+                    sender: chat.name,
+                    content: '자동 답장입니다!',
+                    isMine: false,
+                    file: null,
+                };
+                setChatMessages((prevMessages) => ({
+                    ...prevMessages,
+                    [chatId]: [...(prevMessages[chatId] || []), replyMessage],
+                }));
+            }, 1000);
+        }
+    };
+    
 
     const openChat = (chat) => {
         if (chat.name === '나') {
@@ -99,34 +172,6 @@ const Chat = () => {
         }
     };
 
-    const sendMessage = (chatId, message, file) => {
-        const newMessage = {
-            sender: '나',
-            content: message,
-            isMine: true,
-            file: file || null,
-        };
-
-        const updatedMessages = [...(chatMessages[chatId] || []), newMessage];
-        setChatMessages({
-            ...chatMessages,
-            [chatId]: updatedMessages,
-        });
-
-        setTimeout(() => {
-            const replyMessage = {
-                sender: friends.find((friend) => friend.id === chatId)?.name,
-                content: '자동 답장입니다!',
-                isMine: false,
-                file: null,
-            };
-            setChatMessages((prevMessages) => ({
-                ...prevMessages,
-                [chatId]: [...(prevMessages[chatId] || []), replyMessage],
-            }));
-        }, 1000);
-    };
-
     const closeChat = (chatId) => {
         setOpenChats(openChats.filter((chat) => chat.id !== chatId));
     };
@@ -138,6 +183,10 @@ const Chat = () => {
         });
         closeChat(chatId);
     };
+
+    const filteredFriends = friends.filter((friend) =>
+        friend.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className="chat-container">
