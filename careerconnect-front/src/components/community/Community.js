@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiBriefcase, FiTrendingUp, FiUsers, FiMap, FiBook, FiRss, FiCode, FiPenTool, FiTrello, FiBarChart, FiServer, FiEdit, FiUserPlus } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useParams } from 'react-router-dom';
 import './Community.css';
+import axios from 'axios';
 
 const jobData = {
     developer: {
@@ -272,13 +273,54 @@ const JobIcon = ({ jobCategory }) => {
 const Community = () => {
     const { jobCategory } = useParams();
     const [activeTab, setActiveTab] = useState('jobs');
+    const [news, setNews] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
     const data = jobData[jobCategory] || jobData.developer;
+
+    useEffect(() => {
+        setLoading(true);
+        axios.get(`http://localhost:5000/api/news?page=${page}`)
+            .then(response => {
+                const data = response.data;
+                if (Array.isArray(data)) {
+                    setNews(data);
+                } else {
+                    console.error("Invalid data format: ", data);
+                    setNews([]);
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching news: ", err);
+                setNews([]);
+            })
+            .finally(() => setLoading(false));
+    }, [page]);
+
+    const handleNextPage = () => setPage(page + 1);
+    const handlePrevPage = () => setPage(page > 1 ? page - 1 : 1);
 
     if (!jobCategory || !data) {
         return (
             <div className="community-container">
                 <h1>커리어 Hub</h1>
-                <p>크롤링하여 꾸밀부분</p>
+                <div className="news-section">
+                    {news.length > 0 ? (
+                        <ul className="news-list">
+                            {news.map((item, index) => (
+                                <li key={index} className="news-item">
+                                    <a href={item.link}>{item.title}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>뉴스 기사를 불러오는 중입니다...</p>
+                    )}
+                    <div className="pagination-buttons">
+                        <button onClick={handlePrevPage} disabled={page === 1 || loading}>Previous</button>
+                        <button onClick={handleNextPage} disabled={loading}>Next</button>
+                    </div>
+                </div>
             </div>
         );
     }

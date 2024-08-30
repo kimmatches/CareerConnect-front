@@ -24,7 +24,7 @@ const Chat = () => {
         const savedFriends = localStorage.getItem('friends');
         return savedFriends ? JSON.parse(savedFriends) : [
             { id: 1, name: '나', message: '안녕하세요', isOnline: true },
-            { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: false },
+            { id: 2, name: 'AI', message: '오늘도 열심히', isOnline: true },
             { id: 3, name: '친구', message: '안녕하세요', isOnline: true },
         ];
     });
